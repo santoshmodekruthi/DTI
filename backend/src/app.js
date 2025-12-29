@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser"
 import { ApiError } from "./utils/ApiError.js"
 const app = express()
 app.use(cors({
-    origin: "https://smart-blood-donation-frontend.vercel.app",
+    origin: "https://dti-1-3bt8.onrender.com",
     credentials: true,
 }))
 app.use(express.json())
