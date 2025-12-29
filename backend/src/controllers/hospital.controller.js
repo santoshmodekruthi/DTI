@@ -10,7 +10,16 @@ export const registerHospital = asyncHandler(async (req, res) => {
         throw new ApiError(409, "Hospital with this email already exists");
     }
     const hospital = await Hospital.create({ name, email, location, contactNumber ,password, licenseNumber});
-    res.status(201).json(new ApiResponse(201, "Hospital registered successfully", { hospital }));
+    const token = hospital.generateAuthToken();
+    hospital.token=token;
+    await hospital.save();
+    const options={
+        httpOnly:true,
+        secure:false,
+        sameSite: "lax"
+
+    }
+    res.status(201).cookie("hospitalToken", token, options).json(new ApiResponse(201, "Hospital registered successfully", { hospital }));
 });
 
 export const loginHospital = asyncHandler(async (req, res) => {
