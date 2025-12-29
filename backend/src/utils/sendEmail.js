@@ -4,16 +4,12 @@ import nodemailer from "nodemailer";
 export const sendEmail = async ({ to, subject, text, html }) => {
   try {
     const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // App Password
-  },
-  connectionTimeout: 20000,
-});
+      service: "gmail", // you can also use host/port for custom SMTP
+      auth: {
+        user: process.env.EMAIL_USER, // your Gmail address
+        pass: process.env.EMAIL_PASS, // Google app password
+      },
+    });
 
     const mailOptions = {
       from: `"BloodLink" <${process.env.EMAIL_USER}>`,
