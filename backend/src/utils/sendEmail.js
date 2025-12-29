@@ -1,19 +1,28 @@
-import { Resend } from "resend";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const client = SibApiV3Sdk.ApiClient.instance;
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
 export const sendEmail = async ({ to, subject, text, html }) => {
   try {
-    await resend.emails.send({
-      from: "BloodLink <onboarding@resend.dev>", // works without domain
-      to,
+    const response = await tranEmailApi.sendTransacEmail({
+      sender: {
+        email: "santoshmodekruthi4@gmail.com", // ✅ VERIFIED SENDER
+        name: "DonorLink",
+      },
+      to: [{ email: to }],
       subject,
-      html: html || `<p>${text}</p>`,
+      htmlContent: html || `<p>${text}</p>`,
+      textContent: text,
     });
 
-    console.log(`📩 Email sent successfully to: ${to}`);
+    console.log("📩 Brevo response:", response);
+    console.log(`✅ Email SENT to: ${to}`);
   } catch (error) {
-    console.error("❌ Error sending email:", error);
-    throw error;
+    console.error("❌ Brevo error:", error.response?.body || error);
+    throw new Error("Email sending failed");
   }
 };
