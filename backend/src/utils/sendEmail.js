@@ -1,28 +1,19 @@
-// src/utils/sendEmail.js
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async ({ to, subject, text, html }) => {
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail", // you can also use host/port for custom SMTP
-      auth: {
-        user: process.env.EMAIL_USER, // your Gmail address
-        pass: process.env.EMAIL_PASS, // Google app password
-      },
-    });
-
-    const mailOptions = {
-      from: `"BloodLink" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: "BloodLink <onboarding@resend.dev>", // works without domain
       to,
       subject,
-      text,
-      html,
-    };
+      html: html || `<p>${text}</p>`,
+    });
 
-    await transporter.sendMail(mailOptions);
     console.log(`📩 Email sent successfully to: ${to}`);
   } catch (error) {
-    console.error("❌ Error sending email:", error.message);
+    console.error("❌ Error sending email:", error);
     throw error;
   }
 };
